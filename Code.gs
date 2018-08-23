@@ -1,4 +1,6 @@
-//Template v1.5
+//dev v1.6
+// the intent of this dev build experiment is to create a way to have individual visualizations refreshable to help alieviate the stress when building new vizes. 
+//
 /**
 
 1) SUMMARY SCRIPTS
@@ -149,7 +151,7 @@ function loadSettings(callback)
 function summarizeVotes(callback)
 {
   Logger.log("summarizeVotes()");
-  buildOutputSummaryTable(populateOutputSummaryTable());
+  verifyOutputSummaryTable(1);
 }
 
 
@@ -231,7 +233,8 @@ SpreadsheetApp.getUi().createMenu("InTension")
 .addItem('Set/Update Workshop Size Variables', 'loadSettings')
 .addSeparator()
 .addItem('Build Visualizations', 'prepareVisualizations')
-.addItem('Refresh Visualizations', 'prepareVisualizations')
+.addItem('Refresh All Visualizations', 'prepareVisualizations')
+.addItem('Refresh This Visualization', 'refreshThisVisualization')
 .addSeparator()
 .addItem('Delete All Visualizations', 'deleteAllVisualizations')
 .addItem('Delete & Reset All', 'resetEverything')
@@ -1300,6 +1303,7 @@ function syncContinuums(callback)
 
 buildContinuumAverages()
 buildContinuumAverage()
+verifyOutputSummaryTable()
 buildOutputSummaryTable()
 addSummaryRows()
 deleteSummaryRows()
@@ -1380,6 +1384,38 @@ function buildContinuumAverage(type)
 	); 
 }
 
+
+
+/**
+* VERIFY OUTPUT SUMMARY TABLE
+* Quick check to see if the summary table is built.
+*
+*
+**/
+function verifyOutputSummaryTable(populate){
+  if(populate == null || populate == "" || populate == "undefined"){
+    populate = 0;
+  }
+  var summaryHeaderRows = 2;
+  var numberOfContinuums =  _variSheet.getRange( _numberOfContinuumsCell ).getValue();
+  var maxRows = _sumSheet.getMaxRows();
+  if ((numberOfContinuums + summaryHeaderRows) !== maxRows){
+    if(populate == 1){
+      Logger.log("Output Summary Table needs rebuilding. Building and Populating.");
+      buildOutputSummaryTable(populateOutputSummaryTable());
+    } else if (populate == 0){
+      Logger.log("Output Summary Table needs rebuilding. Building.");
+      buildOutputSummaryTable();
+    }
+  } else {
+    if(populate == 1){
+      Logger.log("Output Summary Table ready. Populating...");
+      populateOutputSummaryTable();
+    } else {
+      Logger.log("Output Summary Table ready. No build needed. ");
+    }
+  }
+}
 
 
 /**
@@ -1472,68 +1508,83 @@ function deleteSummaryRows(numberOfRowsToDelete, lastNeededRow)
 function populateOutputSummaryTable()
 {
   Logger.log("populateOutputSummaryTable()");
+  var numberOfContinuums = getNumberOfContinuums_();
+  for (var c=0; c < numberOfContinuums; c++){
+    populateContinuumSummary(c);
+  }
+
+}
+
+
+
+/**
+* POPULATE CONTINUUM SUMMARY
+* Translates the vote data from the AnalySheet into a summarized form on the SumSheet for a single continuum.
+*
+* @param {int} c The ID of the continuum to build a summary for
+*/
+function populateContinuumSummary(c)
+{  
   continuumNamesToArray();
   var continuums = continuumNamesArray[0];
-  var numberOfContinuums = getNumberOfContinuums_();
   var summaryHeaderRows = 2;
-  
-  for (var c=0; c < continuums.length; c++){
-    var continuumID = (c+1);
-    var contColumnLetter = columnToLetter( ((_headerColumns + c) + 1) );   //"G"
-    var participantTodayVotes = new Array();
-    var participantFutureVotes = new Array();
-    var summaryTodayVotesByChicklet = new Array();
-    var summaryFutureVotesByChicklet = new Array();
-    for (var v=0; v < getNumberOfVoters_(); v++){
-      var voterID = (v+1);
-      var voterTodayRow = ( (_headerRows-3) + ( voterID * _rowsPerVoter ));
-      var voterFutureRow = ( (_headerRows-2) + ( voterID * _rowsPerVoter ));
-      var todayVote = _analySheet.getRange(contColumnLetter+voterTodayRow).getValue();
-      var futureVote = _analySheet.getRange(contColumnLetter+voterFutureRow).getValue();
-      if ( todayVote !== "" )
-      {
-        participantTodayVotes.push(todayVote);
-      }
-      if (futureVote !== "" )
-      {
-        participantFutureVotes.push(futureVote);
-      }
-    }    
-    for(var chickletNumber = 0; chickletNumber <= 10; chickletNumber++){
-      var numberOfTodayVotes = 0;
-      var numberOfFutureVotes = 0;
-      if( participantTodayVotes.length > 0 ){
-        for( var j=0; j<participantTodayVotes.length; j++ ){
-          if(participantTodayVotes[j] == (chickletNumber - 5)){
-            numberOfTodayVotes++; 
-          }
-          summaryTodayVotesByChicklet[chickletNumber] = numberOfTodayVotes;
-        }
-      } else {
-        summaryTodayVotesByChicklet[chickletNumber] = 0;
-      }
-      if( participantFutureVotes.length > 0){
-        for( var k=0; k<participantFutureVotes.length; k++ ){
-          if(participantFutureVotes[k] == (chickletNumber - 5)){
-            numberOfFutureVotes++; 
-          }
-          summaryFutureVotesByChicklet[chickletNumber] = numberOfFutureVotes;
-        }
-      } else {
-        summaryFutureVotesByChicklet[chickletNumber] = 0;
-      }
+  var continuumID = (c+1);
+  var contColumnLetter = columnToLetter( ((_headerColumns + c) + 1) );   //"G"
+  var participantTodayVotes = new Array();
+  var participantFutureVotes = new Array();
+  var summaryTodayVotesByChicklet = new Array();
+  var summaryFutureVotesByChicklet = new Array();
+  for (var v=0; v < getNumberOfVoters_(); v++){
+    var voterID = (v+1);
+    var voterTodayRow = ( (_headerRows-3) + ( voterID * _rowsPerVoter ));
+    var voterFutureRow = ( (_headerRows-2) + ( voterID * _rowsPerVoter ));
+    var todayVote = _analySheet.getRange(contColumnLetter+voterTodayRow).getValue();
+    var futureVote = _analySheet.getRange(contColumnLetter+voterFutureRow).getValue();
+    if ( todayVote !== "" )
+    {
+      participantTodayVotes.push(todayVote);
     }
-    var continuumsNamesRange = "A"+(summaryHeaderRows+continuumID);    
-    var todaySummaryRange = "B"+(summaryHeaderRows+continuumID)+":L"+(summaryHeaderRows+continuumID);    
-    var futureSummaryRange = "N"+(summaryHeaderRows+continuumID)+":X"+(summaryHeaderRows+continuumID);
-    /*Continuum Names*/  _sumSheet.getRange(continuumsNamesRange).setValue(continuums[c]);
-    /*Today Summary*/    _sumSheet.getRange(todaySummaryRange).setValues(listToMatrix(summaryTodayVotesByChicklet,11));
-    /*Future Summary*/   _sumSheet.getRange(futureSummaryRange).setValues(listToMatrix(summaryFutureVotesByChicklet,11));
-    valuesArray[c] = new Array();
-    valuesArray[c][0] = summaryTodayVotesByChicklet;
-    valuesArray[c][1] = summaryFutureVotesByChicklet;
-    addAveragesToVoteArray();
-  } 
+    if (futureVote !== "" )
+    {
+      participantFutureVotes.push(futureVote);
+    }
+  }    
+  for(var chickletNumber = 0; chickletNumber <= 10; chickletNumber++){
+    var numberOfTodayVotes = 0;
+    var numberOfFutureVotes = 0;
+    if( participantTodayVotes.length > 0 ){
+      for( var j=0; j<participantTodayVotes.length; j++ ){
+        if(participantTodayVotes[j] == (chickletNumber - 5)){
+          numberOfTodayVotes++; 
+        }
+        summaryTodayVotesByChicklet[chickletNumber] = numberOfTodayVotes;
+      }
+    } else {
+      summaryTodayVotesByChicklet[chickletNumber] = 0;
+    }
+    if( participantFutureVotes.length > 0){
+      for( var k=0; k<participantFutureVotes.length; k++ ){
+        if(participantFutureVotes[k] == (chickletNumber - 5)){
+          numberOfFutureVotes++; 
+        }
+        summaryFutureVotesByChicklet[chickletNumber] = numberOfFutureVotes;
+      }
+    } else {
+      summaryFutureVotesByChicklet[chickletNumber] = 0;
+    }
+  }
+  var continuumsNamesRange = "A"+(summaryHeaderRows+continuumID);    
+  var todaySummaryRange = "B"+(summaryHeaderRows+continuumID)+":L"+(summaryHeaderRows+continuumID);    
+  var futureSummaryRange = "N"+(summaryHeaderRows+continuumID)+":X"+(summaryHeaderRows+continuumID);
+  /*Continuum Names*/  _sumSheet.getRange(continuumsNamesRange).setValue(continuums[c]);
+  /*Today Summary*/    _sumSheet.getRange(todaySummaryRange).setValues(listToMatrix(summaryTodayVotesByChicklet,11));
+  /*Future Summary*/   _sumSheet.getRange(futureSummaryRange).setValues(listToMatrix(summaryFutureVotesByChicklet,11));
+  valuesArray[c] = new Array();
+  Logger.log("valuesArray["+c+"] = "+valuesArray[c]);
+  valuesArray[c][0] = summaryTodayVotesByChicklet;
+  valuesArray[c][1] = summaryFutureVotesByChicklet;
+  addAveragesToVoteArray();
+  Logger.log("Populated Summary Table for Continuum "+ (c+1));
 }
 
 
@@ -1578,11 +1629,14 @@ function addAveragesToVoteArray()
 
 buildAllVisualizations()
 buildVisualizationSheet()
+refreshThisVisualization()
 setSheetRows()
 addSheetRows()
 populateVisualizationSheet()
 deleteAllVisualizations()
 deleteVisualizationSheet()
+goToNextVisualizationSheet()
+buildFirstVisualiztaion()
 
 **/
 
@@ -1654,9 +1708,38 @@ function buildVisualizationSheet(continuum)
     populateVisualizationSheet(continuum);
     setSheetRows(_spreadsheet.getSheetByName(continuumName), continuum, 1);
   }
-  
-
 }
+
+
+
+/**
+* REFRESH THIS VISUALIZATION
+* Updates the currently selected visualization sheet
+*
+*
+**/
+function refreshThisVisualization()
+{
+  var currentSheet = _spreadsheet.getActiveSheet();
+
+  if(
+    currentSheet.getName() !== _analySheet.getName() && 
+    currentSheet.getName() !== _variSheet.getName() && 
+    currentSheet.getName() !== _todaySheet.getName() && 
+    currentSheet.getName() !== _futureSheet.getName() && 
+    currentSheet.getName() !== _sumSheet.getName() && 
+    currentSheet.getName() !== _vizSheet.getName()
+    )
+  {
+    verifyOutputSummaryTable(0);
+    var continuum = _analySheet.getRange(_sheet.getRange("C2").getValue()+"1").getValue();
+    populateContinuumSummary(continuum-1)
+    buildVisualizationSheet(continuum);
+  } else {
+    Browser.msgBox("This sheet is not a visualization. Select the visualization tab you want to refresh."); 
+  }
+}
+
 
 
 /**
@@ -1664,7 +1747,7 @@ function buildVisualizationSheet(continuum)
 * Updates the visualization rows based on the max number of chicklets
 *
 *
-* @param {sheet} thisShett The visualization sheet for the target continuum
+* @param {sheet} thisSheet The visualization sheet for the target continuum
 * @param {int} continuum The number of the target continuum
 * @param {0/1} opt_redo 0: DEFAULT: just adds rows; 1: first deletes all non-required rows before adding new ones;
 **/
@@ -1704,10 +1787,12 @@ function setSheetRows(thisSheet, continuum, opt_redo)
 function addSheetRows(thisSheet, continuum)
 {
   Logger.log("addSheetRows()");
-  _vizMaxTodayChicklets = highestNumberOfChicklets(valuesArray[(continuum-1)], 'today');
+  Logger.log("addSheetRows():: "+continuum);
+  
+  _vizMaxTodayChicklets = highestNumberOfChicklets(valuesArray[(continuum-1)], 'today');  
   _vizMaxFutureChicklets = highestNumberOfChicklets(valuesArray[(continuum-1)], 'future');
   
-  if(_vizMaxTodayChicklets > 0){
+  if(_vizMaxTodayChicklets > 1){
     thisSheet.insertRowsBefore(
       (_vizHeaderRows+1),
       (_vizMaxTodayChicklets - 1)
@@ -1727,7 +1812,7 @@ function addSheetRows(thisSheet, continuum)
     );
   }
   
-  if(_vizMaxFutureChicklets > 0){
+  if(_vizMaxFutureChicklets > 1){
     thisSheet.insertRowsAfter(
       ((_vizHeaderRows + _vizMaxTodayChicklets) + 4),
       (_vizMaxFutureChicklets - 1)
@@ -1773,6 +1858,7 @@ function populateVisualizationSheet(continuum)
   todayAvgRange.setValue(todayAvg);
   futureRange.setValues(futureSummary);
   futureAvgRange.setValue(futureAvg);
+  _spreadsheet.toast(thisSheet.getName()+" visualization ready.");
 }
 
 
@@ -1817,7 +1903,38 @@ function deleteVisualizationSheet(continuumName)
 
 
 
+/**
+* GO TO NEXT VISUALIZATION SHEET
+* !!!!! N E E D S   W O R K !!!!!
+*
+*/
+function goToNextVisualizationSheet()
+{
+  var sheetsArray = _spreadsheet.getSheets();
+  var continuums = continuumsArray;
+  var numberOfContinuums = continuums.length;
+  var thisContinuumID = (letterToColumn("G")-6);
+  
+  if( thisContinuumID < numberOfContinuums ){
+    buildVisualizationSheet(thisContinuumID + 1);
+    //refreshThisVisualization();
+  } else {
+    _spreadsheet.toast("There are no more continuums.");
+  }
+}
 
+
+
+/**
+* BUILD FIRST VISUALIZATION
+* 
+*
+*/
+function buildFirstVisualization()
+{
+  verifyOutputSummaryTable(1);
+  buildVisualizationSheet(1);
+}
 
 
 
@@ -1933,7 +2050,7 @@ function getRandomName()
 */
 function getRandomVote()
 {
-  votes = [0,1,2,3,4,5,6,7,8,10];
+  votes = [0,1,2,3,4,5,6,7,8,9,10];
   return votes[Math.floor(Math.random()*votes.length)];
 }
 
