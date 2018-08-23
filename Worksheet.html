@@ -1,0 +1,94 @@
+<!-- Template v1.5 -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>
+    
+      function buildWorksheetLink(link){
+        $("#worksheetLink").attr('href', link).removeClass('hidden');
+        $("#makeWorksheetLink").addClass('hidden');
+        $("#worksheetLinkReady").removeClass('hidden');
+      }
+         
+      $(document).ready(function(){
+        $('#worksheetLinkReady').on('closed.bs.alert', function () {
+          $("#makeWorksheetLink").removeClass('hidden');
+        });
+        $("#setVaris").click(function(){
+          setVari();
+        });
+      });
+         
+      function makeWorksheetLink(){
+        google.script.run.withSuccessHandler(buildWorksheetLink).generateIntensionModelingWorksheet();
+      }    
+      
+      function setParticipantsSuccess(){ console.log("participants set successfully"); }
+      function setContinuumsSuccess(){ console.log("continuums set successfully"); }
+
+      function setVari(){
+        var participants = $("#participants").val();
+        var continuums = $("#continuums").val();
+        
+        google.script.run.withSuccessHandler(setParticipantsSuccess).setParticipantsValue(parseInt(participants), 1);
+        google.script.run.withSuccessHandler(setContinuumsSuccess).setContinuumsValue(parseInt(continuums), 1);
+      }
+      
+    </script>
+    <style>
+      .hidden{
+        display: none;
+      }
+      .sub{
+        font-size: 75%;
+      }
+      .title{
+        line-height: 100%;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <div class='row'>&nbsp;</div>
+      <div class='row'>
+        <div class='col'>
+          <p class='title'><strong>Generate Worksheets</strong> <br/><span class='sub'>from Continuums</span></p>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col'>
+          <p>
+            <img src='https://drive.google.com/uc?id=1F0YieYwqwKsVZvSDd1GIQgmcHygehENL' alt='Continuum Export Example' style='width:100%'/>
+          </p>
+          <p>
+            <img src='https://drive.google.com/uc?id=1F0YieYwqwKsVZvSDd1GIQgmcHygehENL' alt='Continuum Export Example' style='width:100%'/>
+          </p>
+          <br/><br/>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col'>
+          <input type='submit' id='makeWorksheetLink' value='Create Worksheet' onclick='makeWorksheetLink();' class='btn btn-primary btn-block'/>
+          <div id='worksheetLinkReady' class="alert alert-success hidden alert-dismissible fade show" role="alert">
+            <h4 class="alert-heading">Link Ready</h4>
+            <p>The worksheet is ready to be imported into OmniGraffle. <strong>Make sure you have a new, blank OmniGraffle file open</strong> in the background. </p>
+            <hr>
+            <p class="mb-0">When you are ready:</p>
+            <a id='worksheetLink' class='btn btn-primary btn-block hidden' role='button'>Open in OmniGraffle</a>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+

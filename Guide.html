@@ -1,0 +1,213 @@
+<!-- Template v1.5 -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <style>
+      
+      .sub{
+        font-size: 75%;
+      }
+      
+      .title{
+        line-height: 100%;
+      }
+      
+      td{
+        width: 25px;
+      }
+      
+      table, tr, td{ 
+        border: 1px solid #000; 
+      }
+      
+    </style>
+  </head>
+  <body>
+     <div class='container sub'>
+      <div class='row' style='color: #fff; background: #333;'>
+        <div class='col'>  
+          <br/><p>
+          <strong>Please use Google Chrome.</strong>
+          <br/><br/>
+          Don't change any values in cells that don't have a <span style='background:#fff2cc; color: #000; line-height: 150%; display: inline-block;'> yellow background </span>!
+          <br/><br/>
+          Google should send me all errors, but if you have any thoughts, feedback, or see anything weird, send me an email at <a href='mailto:joe@understandinggroup.com' target='_blank'>joe@understandinggroup.com</a>.
+          <br/><br/>
+          If any cell says "#ERROR" or "Loading...", refresh your browser and it will clear up. 
+          </p>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col'>
+        <br/>
+        <h4 id='howto'>How to use</h4>
+          <p>
+            This spreadsheet allows a workshop facilitator to collect, tabulate, and visualize the results from an InTension Modeling Workshop. 
+            <br/> 
+            With continuums in-hand, it should only take a couple minutes to get this spreadsheet prepared for your workshop and worksheets ready to print from OmniGraffle.
+          </p>
+          <p>
+            The application was built with the following general workflow in mind:
+          </p>
+          <ol>
+            <li>Create set of continuums</li>
+            <li>Facilitate program workshop</li>
+            <ul>
+              <li>Review tensions</li>
+              <li>Vote where we are today</li>
+              <li>Review today positions &amp; edit/refine continuums</li>
+              <li>Vote where we want to be in the future</li>
+              <li>Review change in today v. future</li>
+              <li>Discuss</li>
+            </ul>
+            <li>Export results for archival purposes</li>
+          </ol>
+          <p>
+            Quick demonstration of this sheet's abilities:
+            <iframe width="270" src="https://www.youtube.com/embed/D1vJ7Iv_XDg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </p>
+          <p>
+            Additionally, we've written a few blog posts that talk a bit more about the process if you need a refresher. 
+          </p>
+          <ul>
+            <li><a href='https://understandinggroup.com/news/world-ia-day-archive/' target='_blank'>(In)tension models in action: A preview of the World IA Day archive</a>
+            <li><a href='https://understandinggroup.com/information-architecture/ia-practice/balance-conflicting-demands/' target='_blank'>How do you balance conflicting demands on your website?</a>
+          </ul>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col'>
+        <br/>
+          <h4 id='settings'>
+              About Settings Tab
+          </h4>
+          <p>
+              This tab is used for setting up the sheet for your InTension Modeling workshop.
+              <br/><br/>
+              1: Input the number of Continuums for this workshop and click “Set Up Continuums”. This will create the right amount of blanks to input your contiuums values. “Terms” are required for each end, but “Descriptions” are optional.
+              <br/><br/>
+              2: Input the number of participants and click "Begin Inputting Votes". This is the last thing you need to do before the sheet is ready to collect votes. 
+          </p>
+          <br/><br/>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col'>
+          <h4>
+              About Worksheet Generation
+          </h4>
+          <p>
+              Participant worksheets can be generated in conjunction with OmniGraffle. Once all the continuums values have been filled in on the Settings tab, click “Export Worksheets” and follow the instructions. 
+          </p>
+          <p>
+            <img src='https://drive.google.com/uc?id=1F0YieYwqwKsVZvSDd1GIQgmcHygehENL' alt='Continuum Export Example' style='width:100%'/>
+          </p>
+          <p>
+              At this time, importing to OmniGraffle is the only way to generate worksheets automagically. 
+          </p>     
+          <br/><br/>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col'>
+          <h4>
+              About Vote Collecting
+          </h4>
+          <p>
+              For each continuum, a column is added and for each participant a row is added. If at any time you need more participant rows, adjust the number from the Settings tab. Nothing bad happens if you have empty/unused participant rows. 
+          </p>
+          <p>
+              On the Vote Collection: Today tab, both the “Name” and the continuum value columns are editable. On the Vote Collection: Future tab, the “Name” column values are copied from the Vote Collection: Today tab. 
+          </p>
+          <p>
+              We’ve found it easier to not have to worry about inputting negative numbers, so votes are not put in as -5 to 5. First votes are translated to positive numbers and inputted as 0 to 10.
+              <br/>
+             (Translation is also included on the generated worksheets)
+          </p>
+          <p>
+            <img src='https://drive.google.com/uc?id=1lk20mmYQKU6BNtb03ZNOeeWg3Hp5KPPX' alt='voting translation table' style='width:100%'/>
+          </p>
+          <br/><br/>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col'>
+          <h4>
+              About Alignment Analysis
+          </h4>
+          <p>
+            This sheet collects each participant’s votes and compares them to the aggregate of all participants.
+            <br/><br/>
+            <strong>Today Average (Alignment Analysis!F3)</strong> - Average of all the Today votes for a continuum.
+            <br/><br/>
+            <strong>Future Average (Alignment Analysis!F4)</strong> - Average of all the Future votes for a continuum.
+            <br/><br/>
+            <strong>Change Average (Alignment Analysis!F5)</strong> - The average difference between where the group voted for being today vs. where they voted for wanting to be in the future for a continuum.
+            <br/><br/>
+            <strong>Red = movement left;</strong>
+            <br/>
+            <img src='https://drive.google.com/uc?id=1Cz-gPkT42gZHZx-aBipuuesbv-rp34Q1' alt='Movement Left' style='width:50%; display: block;'/>
+            <br/>
+            <strong>Blue = movement right;</strong>
+            <br/>
+            <img src='https://drive.google.com/uc?id=1S5HTajjDhGXFbGMLlA9KJmT3A9h0CynF' alt='Movement Right' style='width:50%; display: block;'/>
+            <em>Saturation = amount of movement;</em>
+            <br/><br/>
+            <strong>Amount of individual misalignment (Alignment Analysis!F6)</strong> - A value getting at the amount of discord amongst the population's votes. Takes into account both the direction of change as well as the amount of change.  Lower numbers (green) indicate more-aligned continuums.
+            <br/><br/>
+            <strong>Today (Alignment Analysis!F10)</strong> - Individual's votes for where things are today for a continuum.
+            <br/><br/>
+            <strong>Future (Alignment Analysis!F11)</strong> - Individual's votes for where things should be in the future for a continuum.
+            <br/><br/>
+            <strong>Change (Alignment Analysis!F12)</strong> - The change between where an individual voted for being today vs. where they voted for wanting to be in the future for a continuum.
+            <img src='https://drive.google.com/uc?id=19fhXiOGzWyQJyUYGL7Uzf7RaL_q9WnmF' alt='Color Key for Amount Of Directional Change' style='width:100%;'/>
+            Red = a left-ward move; Blue = a right-ward move; Darker color = larger movement;
+            <br/><br/>
+            <strong>Alignment with the average (Alignment Analysis!F13)</strong> - This individual's alignment with the group's average for a continuum.
+            <br/><br/>
+            <strong>Number of Misalignments (Alignment Analysis!A1)</strong> - This is the number of continuums for which this individual voted significantly in the opposite direction of the group average. This is helpful for identifying individual outliers and making sure that key stakeholders aren't in silent opposition. 
+          </p>
+          <br/><br/>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col'>
+          <h4>
+              About Visualizations
+          </h4>
+          <p>
+              For each continuum, a visualization can be generated with either just Today’s votes or both Today and Future votes populated.
+              <br/><br/>
+              Each vote is represented as a “chicklet” along the continuum, either above (today) or below (future) the continuum line.
+              <br/><br/>
+              The average position of a continuum is shown as a dark chicklet along the continuum line. When the average chicklet overlaps with a vote chicklet no text is present, when the average chicklet is not on top of a vote chicklet, “Average Only” is in the average chicklet to indicate that there is no vote in that position. 
+          </p>
+          <br/><br/>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col'>
+          <h4>
+              About Output Generation
+          </h4>
+          <p>
+              The visualizations can all be exported at once into omnigraffle for further manipulation and archiving. 
+              <br/>
+              Click “InTension” > “Export Output” and follow the instructions. 
+          </p>
+          <p>
+            <img src='https://drive.google.com/uc?id=1gQB0dTEgtbk-Im_bjV9z8K0Zc7sh_ZlG' alt='Example of Output Export' style='width:100%'/>
+          </p>
+          <br/><br/>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+
