@@ -1701,12 +1701,13 @@ function buildVisualizationSheet(continuum)
     var continuumLetter = columnToLetter((continuum + _headerColumns));
     thisSheet.getRange(orientationCell).setValue(continuumLetter);
     thisSheet.getRange("B1").setValue(continuumName);
+    setSheetRows(thisSheet, continuum, 0);
     populateVisualizationSheet(continuum);
 
-    setSheetRows(thisSheet, continuum, 0);
   } else {
-    populateVisualizationSheet(continuum);
     setSheetRows(_spreadsheet.getSheetByName(continuumName), continuum, 1);
+    populateVisualizationSheet(continuum);
+
   }
 }
 
@@ -1756,7 +1757,7 @@ function setSheetRows(thisSheet, continuum, opt_redo)
 
   opt_redo = 1;
   
-  Logger.log("setSheetRows("+thisSheet+","+opt_redo+")");
+  Logger.log("setSheetRows("+thisSheet+","+continuum+","+opt_redo+")");
 
   var baseRow = findInRange('x', thisSheet.getRange("A:A"));
   var numberOfTopRowsToDelete = (baseRow - 3) - _vizHeaderRows;
@@ -1788,6 +1789,9 @@ function addSheetRows(thisSheet, continuum)
 {
   Logger.log("addSheetRows()");
   Logger.log("addSheetRows():: "+continuum);
+  
+  populateContinuumSummary(continuum-1);
+
   
   _vizMaxTodayChicklets = highestNumberOfChicklets(valuesArray[(continuum-1)], 'today');  
   _vizMaxFutureChicklets = highestNumberOfChicklets(valuesArray[(continuum-1)], 'future');
@@ -1910,17 +1914,22 @@ function deleteVisualizationSheet(continuumName)
 */
 function goToNextVisualizationSheet()
 {
-  var sheetsArray = _spreadsheet.getSheets();
+  var sheetsArray = _spreadsheet.getSheets();  
+  
   var continuums = continuumsArray;
+  
   var numberOfContinuums = continuums.length;
-  var thisContinuumID = (letterToColumn("G")-6);
+    
+  var thisContinuumLetter = _sheet.getRange("c2").getValue();
+  
+  var thisContinuumID = (letterToColumn(thisContinuumLetter)-6);
   
   if( thisContinuumID < numberOfContinuums ){
     buildVisualizationSheet(thisContinuumID + 1);
-    //refreshThisVisualization();
   } else {
     _spreadsheet.toast("There are no more continuums.");
   }
+  
 }
 
 
@@ -1932,7 +1941,7 @@ function goToNextVisualizationSheet()
 */
 function buildFirstVisualization()
 {
-  verifyOutputSummaryTable(1);
+  //verifyOutputSummaryTable(1);
   buildVisualizationSheet(1);
 }
 
