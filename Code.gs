@@ -1,5 +1,5 @@
 //dev v1.6
-// the intent of this dev build experiment is to create a way to have individual visualizations refreshable to help alieviate the stress when building new vizes. 
+// the intent of this dev build experiment is to figure out why the script produces erratic results when multiple users are viewing the sheet.
 //
 /**
 
