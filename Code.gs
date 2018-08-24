@@ -1750,13 +1750,12 @@ function refreshThisVisualization()
 *
 * @param {sheet} thisSheet The visualization sheet for the target continuum
 * @param {int} continuum The number of the target continuum
-* @param {0/1} opt_redo 0: just adds rows; 1: DEFAULT: first deletes all non-required rows before adding new ones;
+* @param {0/1} opt_redo 0: DEFAULT: just adds rows; 1: first deletes all non-required rows before adding new ones;
 **/
 function setSheetRows(thisSheet, continuum, opt_redo)
 {
-  if(opt_redo == null || opt_redo == "" || opt_redo == "undefined"){
-    opt_redo = 1;
-  }
+
+  opt_redo = 1;
   
   Logger.log("setSheetRows("+thisSheet+","+continuum+","+opt_redo+")");
 
@@ -1764,42 +1763,6 @@ function setSheetRows(thisSheet, continuum, opt_redo)
   var numberOfTopRowsToDelete = (baseRow - 3) - _vizHeaderRows;
   var numberOfBottomRowsToDelete = (((thisSheet.getMaxRows() - _vizHeaderRows) - baseRow) - _vizFooterRows) ;
   
-  
-  populateContinuumSummary(continuum-1);
-  _vizMaxTodayChicklets = highestNumberOfChicklets(valuesArray[(continuum-1)], 'today');  
-  _vizMaxFutureChicklets = highestNumberOfChicklets(valuesArray[(continuum-1)], 'future');
-  
-  var todayRows = (baseRow - (_vizHeaderRows + 1)); // (5 - (2 + 1)) = 2
-  var futureRows = (thisSheet.getMaxRows() - (_vizFooterRows + baseRow)); //(10 - (3 + 5) = 2
-  
-  Logger.log("max today: "+_vizMaxTodayChicklets);
-  Logger.log("current today: "+todayRows);
-  Logger.log("max future: "+_vizMaxFutureChicklets);
-  Logger.log("current future: "+futureRows);
-
-  //instead of approaching the full set of rows as a "delete" or "add" process, approach top and bottom separate and calculate add/delete for each as separate processes
-  
-  
-  if( ( ( (_vizMaxTodayChicklets + _vizMaxFutureChicklets) + (_vizFooterRows + _vizHeaderRows) ) + 1) > thisSheet.getMaxRows() ){
-    Logger.log("Need to add more Rows");
-    var topRows = ((baseRow + _vizHeaderRows + 3) - _vizMaxTodayChicklets);
-    Logger.log("topRows: "+topRows);
-    var bottomRows = ( thisSheet.getMaxRows() - ( ( (_vizHeaderRows + _vizFooterRows)  + baseRow ) + 3) );
-    Logger.log("bottomRows: "+bottomRows);
-    addSheetRows(thisSheet, baseRow, topRows, bottomRows);
-  } else if( ( ( (_vizMaxTodayChicklets + _vizMaxFutureChicklets) + (_vizFooterRows + _vizHeaderRows) +1 )  ) < thisSheet.getMaxRows() ){
-    Logger.log("Need to delete Rows");
-  } else if( ( ( (_vizMaxTodayChicklets + _vizMaxFutureChicklets) + (_vizFooterRows + _vizHeaderRows)+1 )  ) == thisSheet.getMaxRows() ){
-    Logger.log("No need to futz with rows");
-  }
-  
-  //addSheetRows(thisSheet, continuum);
-
-}
-
-
-function deleteSheetRows(thisSheet, numberOfTopRowsToDelete, numberOfBottomRowsToDelete)
-{
   if(numberOfTopRowsToDelete > 0) {
     thisSheet.deleteRows((_vizHeaderRows + 1), numberOfTopRowsToDelete);
   }
@@ -1807,6 +1770,9 @@ function deleteSheetRows(thisSheet, numberOfTopRowsToDelete, numberOfBottomRowsT
   if(numberOfBottomRowsToDelete > 0) {
     thisSheet.deleteRows(((_vizHeaderRows + 1) + _vizBaseRows), numberOfBottomRowsToDelete);
   }
+  
+  addSheetRows(thisSheet, continuum);
+
 }
 
 
@@ -1819,43 +1785,48 @@ function deleteSheetRows(thisSheet, numberOfTopRowsToDelete, numberOfBottomRowsT
 * @param {sheet} thisShett The visualization sheet for the target continuum
 * @param {int} continuum The number of the target continuum
 **/
-function addSheetRows(thisSheet, baseRow, topRows, bottomRows)
+function addSheetRows(thisSheet, continuum)
 {
-  Logger.log("addSheetRows("+thisSheet.getName()+", "+baseRow+", "+topRows+", "+bottomRows+")");
+  Logger.log("addSheetRows()");
+  Logger.log("addSheetRows():: "+continuum);
   
-  if(topRows > 1){
+  populateContinuumSummary(continuum-1);
+
+  
+  _vizMaxTodayChicklets = highestNumberOfChicklets(valuesArray[(continuum-1)], 'today');  
+  _vizMaxFutureChicklets = highestNumberOfChicklets(valuesArray[(continuum-1)], 'future');
+  
+  if(_vizMaxTodayChicklets > 1){
     thisSheet.insertRowsBefore(
       (_vizHeaderRows+1),
-      (topRows - 1)
+      (_vizMaxTodayChicklets - 1)
     );
     
-    var topTemplateA1 = "A" + ((_vizHeaderRows + topRows)) + ":O" + ((_vizHeaderRows + topRows));
+    var topTemplateA1 = "A" + ((_vizHeaderRows + _vizMaxTodayChicklets)) + ":O" + ((_vizHeaderRows + _vizMaxTodayChicklets));
     var topTemplate = thisSheet.getRange(topTemplateA1);
     
     topTemplate.autoFill(
       thisSheet.getRange(
         (_vizHeaderRows + 1),
         1,
-        (topRows),
+        (_vizMaxTodayChicklets),
         thisSheet.getMaxColumns()
       ),
       SpreadsheetApp.AutoFillSeries.DEFAULT_SERIES
     );
   }
   
-  if(bottomRows > 1){
+  if(_vizMaxFutureChicklets > 1){
     thisSheet.insertRowsAfter(
-      (thisSheet.getMaxRows() - _vizFooterRows),
-      (bottomRows)
+      ((_vizHeaderRows + _vizMaxTodayChicklets) + 4),
+      (_vizMaxFutureChicklets - 1)
     );
-    
-    var bottomTemplate = thisSheet.getRange("A" + (thisSheet.getMaxRows() - _vizFooterRows) + ":O" + (thisSheet.getMaxRows() - _vizFooterRows));
-    
+    var bottomTemplate = thisSheet.getRange("A" + ((_vizHeaderRows + _vizMaxTodayChicklets) + 4) + ":O" + ((_vizHeaderRows + _vizMaxTodayChicklets) + 4));
     bottomTemplate.autoFill(
       thisSheet.getRange(
-        (thisSheet.getMaxRows() - _vizFooterRows),
+        ((_vizHeaderRows + 4) + _vizMaxTodayChicklets),
         1,
-        (baseRow + bottomRows),
+        _vizMaxFutureChicklets,
         thisSheet.getMaxColumns()
       ),
       SpreadsheetApp.AutoFillSeries.DEFAULT_SERIES
