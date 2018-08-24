@@ -1171,7 +1171,6 @@ function removeContinuumTallieColumns(totalContinuums)
 *
 *
 * @param {int} numberOfContinuums The total number of continuums in the model.
-* @param {function} callback
 */
 function buildContinuumNameInputs(numberOfContinuums, callback)
 {
@@ -1817,10 +1816,7 @@ function deleteSheetRows(thisSheet, numberOfTopRowsToDelete, numberOfBottomRowsT
 * Adds rows to the target continuum visualization sheet
 *
 *
-* @param {Sheet Object} thisSheet The visualization sheet for the target continuum
-* @param {int} baseRow
-* @param {int} topRows
-* @param {int} bottomRows
+* @param {sheet} thisShett The visualization sheet for the target continuum
 * @param {int} continuum The number of the target continuum
 **/
 function addSheetRows(thisSheet, baseRow, topRows, bottomRows)
@@ -2159,7 +2155,7 @@ exportOutputSidebar()
 * URL escapes the code that builds the omnigraffle exports and prepends the 
 * header needed to open in OmniGraffle.
 *
-* @param {string} script The script to be opened in omnigraffle
+* @param {string} string The script to be opened in omnigraffle
 * @return {string} targetURL Contains properly formatted string to be opened in OG. 
 */
 function escapeAndRunInOG(script){
