@@ -66,6 +66,7 @@ function generateModelOutput()
 *
 *
 * @param {Array} chickSummary Array of vote values
+* @param {string} opt_which DEFAULT: "overall", "today", "future"
 * @return {int} number of the tallest stack of chicklets
 **/
 function highestNumberOfChicklets(chickSummary, opt_which){
